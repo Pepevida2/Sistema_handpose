@@ -31,6 +31,13 @@ function preload() {
 function setup() {
   createCanvas(windowWidth, windowHeight);
   
+  // === NUEVO: BLOQUEAR SCROLL Y BARRAS LATERALES ===
+  // Esto inyecta estilos CSS directamente al cuerpo de la página
+  document.body.style.overflow = "hidden"; // Quita las barras de desplazamiento
+  document.body.style.margin = "0";      // Quita los bordes blancos por defecto
+  document.body.style.padding = "0";
+  // =================================================
+
   // Gráfico pequeño para el fondo borroso
   pg = createGraphics(320, 240); 
 
@@ -149,9 +156,7 @@ function draw() {
         col = lerpColor(amarillo, blanco, nt);
 
         // === GATILLO DE PARTÍCULAS ===
-        // Cuando está casi al máximo (blanco), soltamos chispas
         if (tcol > 0.95) {
-            // Creamos 5 chispas nuevas por cuadro
             for(let i = 0; i < 5; i++) {
                 particles.push(new Particle(cx, cy));
             }
@@ -241,31 +246,26 @@ function gotHands(results) {
   hands = results;
 }
 
-// === CLASE PARTÍCULA MEJORADA (Chispas Grandes y Visibles) ===
+// === CLASE PARTÍCULA ===
 class Particle {
   constructor(x, y) {
     this.pos = createVector(x, y);
-    // Velocidad en 360 grados
     this.vel = p5.Vector.random2D();
-    this.vel.mult(random(8, 18)); // Muy rápidas
+    this.vel.mult(random(8, 18)); 
     
     this.alpha = 255;
-    // CAMBIO AQUÍ: Grosor mucho mayor
     this.w = random(4, 8); 
-    // CAMBIO AQUÍ: Estela un poco más larga
     this.lenFactor = random(0.8, 1.5); 
   }
 
   update() {
     this.pos.add(this.vel);
-    // CAMBIO AQUÍ: Se desvanecen un poco más lento para que se noten más
     this.alpha -= 12; 
   }
 
   display() {
     stroke(255, this.alpha);
     strokeWeight(this.w);
-    // Dibujamos una línea hacia atrás para simular velocidad
     line(
       this.pos.x, 
       this.pos.y, 
